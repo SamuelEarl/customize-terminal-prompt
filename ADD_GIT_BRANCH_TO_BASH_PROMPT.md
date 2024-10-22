@@ -2,9 +2,12 @@ Add the following config to the bottom of your `~/.bashrc` file. I think the fol
 
 For more information and ideas search for "customize bash prompt".
 
+**Advanced Version:**
+
 ```
 # Add git branch, if it's present, to PS1.
 parse_git_branch() {
+#  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
   GIT_BRANCH="$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')"
   # printf "$GIT_BRANCH"
   # If the previous command returns an empty string (i.e. there is no git branch in the current directory),
@@ -19,39 +22,40 @@ parse_git_branch() {
 }
 
 # Special Characters: https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Controlling-the-Prompt
-FILE_PATH="\w" # Path to current working directory.
+# \w = Path to current working directory
 
 # Color and formatting reference: https://misc.flogisoft.com/bash/tip_colors_and_formatting
-RESET="\e[0m"
-BOLD="\e[1m"
-BLACK_FG="\e[30m"
-BLACK_BG="\e[40m"
-WHITE_FG="\e[97m"
-WHITE_BG="\e[107m"
-RED_FG="\e[31m"
-RED_BG="\e[41m"
-GREEN_FG="\e[32m"
-GREEN_BG="\e[42m"
-BLUE_FG="\e[34m"
-BLUE_BG="\e[44m"
-CYAN_FG="\e[36m"
-CYAN_BG="\e[46m"
-LIGHT_GRAY_FG="\e[37m"
-LIGHT_GRAY_BG="\e[47m"
+# \e[0m  = reset
+# \e[1m  = bold
+# \e[30m = black foreground
+# \e[31m = red foreground
+# \e[32m = green foreground
+# \e[34m = blue foreground
 
-# Comment out to use non-formatted prompt.
-use_formatted_prompt=yes
+# Uncomment to use color prompt.
+color_prompt=yes
 
-if [ "$use_formatted_prompt" = yes ]; then
-  # white foreground, black background
-  PS1="${BOLD}${WHITE_FG}${BLACK_BG}${FILE_PATH} $(parse_git_branch)$ ${RESET} "
-  # black foreground, white background
-  # PS1="${BOLD}${BLACK_FG}${WHITE_BG}${FILE_PATH} $(parse_git_branch)$ ${RESET} "
-
-  # Examples showing different colors and formats:
-  # PS1="${BOLD}${WHITE_FG}${GREEN_BG}${FILE_PATH} ${BLUE_BG} $(parse_git_branch)${BLACK_FG}${LIGHT_GRAY_BG} $ ${RESET} "
-  # PS1="${RED_FG}${WHITE_BG}${FILE_PATH}${RESET} ${CYAN_FG}$(parse_git_branch)${RESET}$ "
+if [ "$color_prompt" = yes ]; then
+  PS1='\[\e[1;34m\]\w \[\e[1;32m\]$(parse_git_branch)\[\e[0m\]$ '
 else
   PS1='\w $(parse_git_branch)$ '
 fi
+unset color_prompt force_color_prompt
+```
+
+---
+
+**Simpler Version:**
+
+```
+# Add git branch, if it's present, to PS1.
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+if [ "$color_prompt" = yes ]; then
+  PS1='\[\033[01;34m\]\w\[\033[01;31m\]$(parse_git_branch)\[\033[00m\]\$ '
+else
+  PS1='\w$(parse_git_branch)\$ '
+fi
+unset color_prompt force_color_prompt
 ```
