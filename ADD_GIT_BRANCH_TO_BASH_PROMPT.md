@@ -5,9 +5,11 @@ For more information and ideas search for "customize bash prompt".
 **Advanced Version:**
 
 ```
+#######################################
+# START: Add git branch to bash prompt
+#######################################
 # Add git branch, if it's present, to PS1.
 parse_git_branch() {
-#  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
   GIT_BRANCH="$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')"
   # printf "$GIT_BRANCH"
   # If the previous command returns an empty string (i.e. there is no git branch in the current directory),
@@ -20,6 +22,14 @@ parse_git_branch() {
     echo "$GIT_BRANCH "
   fi
 }
+# Uncomment to use color prompt.
+# color_prompt=yes
+if [ "$color_prompt" = yes ]; then
+  PS1='\[\e[1;34m\]\w \[\e[1;32m\]$(parse_git_branch)\[\e[0m\]$ '
+else
+  PS1='\w $(parse_git_branch)$ '
+fi
+unset color_prompt force_color_prompt
 
 # Special Characters: https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Controlling-the-Prompt
 # \w = Path to current working directory
@@ -31,16 +41,9 @@ parse_git_branch() {
 # \e[31m = red foreground
 # \e[32m = green foreground
 # \e[34m = blue foreground
-
-# Uncomment to use color prompt.
-color_prompt=yes
-
-if [ "$color_prompt" = yes ]; then
-  PS1='\[\e[1;34m\]\w \[\e[1;32m\]$(parse_git_branch)\[\e[0m\]$ '
-else
-  PS1='\w $(parse_git_branch)$ '
-fi
-unset color_prompt force_color_prompt
+#######################################
+# END: Add git branch to bash prompt
+#######################################
 ```
 
 ---
